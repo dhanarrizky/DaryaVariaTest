@@ -8,9 +8,11 @@ public static class ServicesConfiguration {
     public static IServiceCollection AddConfigurationServices(this IServiceCollection services) {
         // Repositories configuration
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
 
         // services configuration
         services.AddScoped<OrderServices>();
+        services.AddScoped<ProductServices>();
         return services;
     }
 }

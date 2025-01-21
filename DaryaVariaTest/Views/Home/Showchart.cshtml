@@ -1,0 +1,53 @@
+﻿@model ChartViewModel
+@{
+    ViewData["Title"] = "Showchart";
+}
+
+
+<h2>Chart Laporan Penjualan</h2>
+
+<canvas id="myChart" width="400" height="200"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const datasetsJson = @Html.Raw(Json.Serialize(Model.Datasets ?? new List<ChartViewModel.Dataset>()));
+    const datasets = datasetsJson.$values.map(dataset => {
+        console.log('dataset 2d:', dataset);
+        return {
+            label: dataset.label,
+            data: dataset.data,
+            backgroundColor: dataset.backgroundColor
+        };
+    });
+    const labels = @Html.Raw(Json.Serialize(Model.Labels));
+    const chartData = {
+        labels: labels,
+        datasets: datasets
+    };
+    console.log("Chart Data:", chartData);
+    console.log("Labels:", chartData.labels);
+    console.log("Datasets:", chartData.datasets);
+    const config = {
+        type: 'bar',
+        data: chartData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'Laporan Penjualan' }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
+                        }
+                    }
+                }
+            }
+        }
+    };
+    const ctx = document.getElementById('myChart').getContext('2d');
+    new Chart(ctx, config);
+</script>

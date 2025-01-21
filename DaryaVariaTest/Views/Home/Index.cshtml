@@ -8,11 +8,17 @@
 </div>
 
 <div class="container mt-4">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+        Add New Transaction
+    </button>
+</div>
+
+<div class="container mt-4">
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
             <tr>
                 <th>Transaction ID</th>
-                <th>Account ID</th>
+                <th>User Name</th>
                 <th>Account Type</th>
                 <th>Order Date</th>
                 <th>Delivery Date</th>
@@ -21,6 +27,7 @@
                 <th>Tax</th>
                 <th>Total Amount</th>
                 <th>Status</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -30,15 +37,37 @@
                 {
                     <tr>
                         <td>@transaction.Id</td>
-                        <td>@transaction.AccountId</td>
+                        <td>@transaction.Account.Name</td>
                         <td>@transaction.AccountType</td>
                         <td>@transaction.OrderDate.ToString("yyyy-MM-dd")</td>
-                        <td>@transaction.DeliveryDate?.ToString("yyyy-MM-dd") ?? "N/A"</td>
-                        <td>@transaction.Note ?? "No Note"</td>
+                        <td>@transaction.DeliveryDate?.ToString("yyyy-MM-dd")</td>
+                        <td>@transaction.Note</td>
                         <td>@transaction.Discount.ToString("C")</td>
                         <td>@transaction.Tax.ToString("C")</td>
                         <td>@transaction.TotalAmount.ToString("C")</td>
-                        <td>@transaction.Status ?? "Pending"</td>
+                        <td>@transaction.Status</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                @if (!string.IsNullOrEmpty(transaction.Status)) {
+                                    if (transaction.Status.Equals("Panding", StringComparison.OrdinalIgnoreCase)) {
+                                        <button class="btn btn-warning btn-detail">
+                                            Payment
+                                        </button>
+                                    }
+
+                                    if (!transaction.Status.Equals("Panding", StringComparison.OrdinalIgnoreCase) && transaction.DeliveryDate == null) {
+                                        <button class="btn btn-secondary btn-detail">
+                                            Delivery
+                                        </button>
+                                    }
+                                }
+
+                                <button class="btn btn-primary btn-detail" data-bs-toggle="modal" data-bs-target="#transactionModal"
+                                        data-id="@transaction.Id">
+                                    Detail
+                                </button>
+                            </div>
+                        </td>
                     </tr>
                 }
             }
@@ -51,3 +80,362 @@
         </tbody>
     </table>
 </div>
+
+<div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="transactionModalLabel">Transaction Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Transaction ID:</strong> <span id="modalTransactionId"></span></p>
+                <p><strong>Account Name:</strong> <span id="modalAccountName"></span></p>
+                <p><strong>Phone Number:</strong> <span id="modalPhoneNumber"></span></p>
+                <p><strong>Address:</strong> <span id="modalAddress"></span></p>
+                <p><strong>Order Date:</strong> <span id="modalOrderDate"></span></p>
+                <p><strong>Delivery Date:</strong> <span id="modalDeliveryDate"></span></p>
+                <p><strong>Note:</strong> <span id="modalNote"></span></p>
+                <p><strong>Discount:</strong> <span id="modalDiscount"></span></p>
+                <p><strong>Tax:</strong> <span id="modalTax"></span></p>
+                <p><strong>Total Amount:</strong> <span id="modalTotalAmount"></span></p>
+                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+
+                <h5>Products:</h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalProductsList">
+                    </tbody>
+                </table>
+
+                <h5>Payments:</h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Payment ID</th>
+                            <th>From Bank</th>
+                            <th>To Bank</th>
+                            <th>Payment Date</th>
+                            <th>Payment Amount</th>
+                            <th>Payment Method</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalPaymentsList">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTransactionModalLabel">Add New Transaction</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 border-end">
+                        <form id="addTransactionForm">
+                            <div class="mb-3">
+                                <label for="transactionAccountId" class="form-label">Account ID</label>
+                                <input type="text" class="form-control" id="transactionAccountId" name="accountId" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="transactionAccountType" class="form-label">Account Type</label>
+                                <select class="form-control" id="transactionAccountType" name="accountType" required>
+                                    <option value="">Select Account Type</option>
+                                    <option value="individual">Individual</option>
+                                    <option value="company">Company</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="transactionNote" class="form-label">Note</label>
+                                <textarea class="form-control" id="transactionNote" name="note"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="transactionDiscount" class="form-label">Discount</label>
+                                <input type="number" class="form-control" id="transactionDiscount" name="discount" step="0.01" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="transactionTax" class="form-label">Tax</label>
+                                <input type="number" class="form-control" id="transactionTax" name="tax" step="0.01" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="transactionTotalAmount" class="form-label">Total Amount</label>
+                                <input type="number" disabled class="form-control" id="transactionTotalAmount" name="totalAmount" step="0.01" required>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6>Buy Products</h6>
+                        <form id="addProductForm" class="mb-3">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="productName" class="form-label">Product Name</label>
+                                    <select class="form-control" id="productName" name="productName" required>
+                                        <option value="">Select Account Type</option>
+                                    </select>
+                                    @* <input type="text" class="form-control" id="productName" name="productName" required> *@
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="productQuantity" class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" id="productQuantity" name="quantity" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="productPrice" class="form-label">Price</label>
+                                    <input type="number" class="form-control" id="productPrice" name="price" step="0.01" required>
+                                </div>
+                                <div class="col-md-12 text-end">
+                                    <button type="button" class="btn btn-secondary" id="addProductButton">Add Product</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" form="addTransactionForm">Save Transaction</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const productSelect = document.getElementById('productName');
+            let allProductsGeneral = {};
+
+            async function fetchProductOptions() {
+                const response = await fetch('/api/ProductApi/getAll');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch product options');
+                }
+                const data = await response.json();
+                populateProductSelect(data.$values);
+            }
+
+            function populateProductSelect(allProducts) {
+                console.log('allProducts : ',allProducts)
+                productSelect.innerHTML = '<option value="">Select Product</option>';
+                allProducts.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    productSelect.appendChild(option);
+                });
+
+                allProductsGeneral = allProducts;
+            }
+
+            fetchProductOptions();
+
+            const modal = document.getElementById('transactionModal');
+            let products = [];
+
+            modal.addEventListener('show.bs.modal', async function (event) {
+                const button = event.relatedTarget;
+                const transactionId = button.getAttribute('data-id');
+                const url = `/api/HomeApi/detail/${transactionId}`;
+
+                const response = await fetch(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        showTransactionDetails(data.data);
+                    } else {
+                        alert('Transaction details not found.');
+                    }
+                } else {
+                    alert('Failed to fetch transaction details.');
+                }
+            });
+
+            document.getElementById('addProductButton').addEventListener('click', function () {
+            const productId = document.getElementById('productName').value;
+            const quantity = document.getElementById('productQuantity').value;
+            const price = document.getElementById('productPrice').value;
+
+            if (productName && quantity > 0 && price > 0) {
+                const totalAmount = (quantity*price).toFixed(2);
+                products.push({ productId, quantity, price, totalAmount });
+
+                updateProductTable();
+                document.getElementById('addProductForm').reset();
+            } else {
+                alert('Please fill out all fields correctly.');
+            }
+        });
+
+        function updateProductTable() {
+            const tableBody = document.getElementById('productTableBody');
+            tableBody.innerHTML = ''; 
+
+            products.forEach((product, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                        <td>${allProductsGeneral[index]?.name}</td>
+                        <td>${product.quantity}</td>
+                        <td>${product.price}</td>
+                        <td>${product.totalAmount}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="removeProduct(${index})">Remove</button>
+                        </td>
+                    `;
+
+                tableBody.appendChild(row);
+                calculateTotalAmount();
+            });
+
+            if (products.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center">No products added yet.</td></tr>';
+            }
+        }
+
+        window.removeProduct = function (index) {
+            products.splice(index, 1);
+            updateProductTable();
+        };
+
+        function calculateTotalAmount() {
+            const total = products.reduce((sum, product) => sum + (product.quantity * product.price), 0);
+            document.getElementById('transactionTotalAmount').value = total.toFixed(2);
+        }
+
+        function showTransactionDetails(transaction) {
+            document.getElementById('modalTransactionId').innerText = transaction.id;
+            document.getElementById('modalAccountName').innerText = transaction.account.name;
+            document.getElementById('modalPhoneNumber').innerText = transaction.account.phoneNumber;
+            document.getElementById('modalAddress').innerText = transaction.account.address;
+            document.getElementById('modalOrderDate').innerText = transaction.orderDate;
+            document.getElementById('modalDeliveryDate').innerText = transaction.deliveryDate;
+            document.getElementById('modalNote').innerText = transaction.note;
+            document.getElementById('modalDiscount').innerText = transaction.discount;
+            document.getElementById('modalTax').innerText = transaction.tax;
+            document.getElementById('modalTotalAmount').innerText = transaction.totalAmount;
+            document.getElementById('modalStatus').innerText = transaction.status;
+
+            let productsTable = document.getElementById('modalProductsList');
+            productsTable.innerHTML = '';
+            transaction.account.products.forEach(product => {
+                let row = `<tr>
+                    <td>${product.name}</td>
+                    <td>${product.price}</td>
+                    <td>2</td>
+                    <td>${product.price * 2}</td>
+                </tr>`;
+                productsTable.innerHTML += row;
+            });
+
+            let paymentsTable = document.getElementById('modalPaymentsList');
+            paymentsTable.innerHTML = '';
+            transaction.informationOfPayments.forEach(payment => {
+                let row = `<tr>
+                    <td>${payment.id}</td>
+                    <td>${payment.fromBankNumber}</td>
+                    <td>${payment.toBankNumber}</td>
+                    <td>${payment.paymentDate}</td>
+                    <td>${payment.paymentAmount}</td>
+                    <td>${payment.paymentMethod}</td>
+                </tr>`;
+                paymentsTable.innerHTML += row;
+            });
+
+            var myModal = new bootstrap.Modal(document.getElementById('transactionModal'));
+            myModal.show();
+        }
+
+
+        document.getElementById('addTransactionForm').addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const accountId = document.getElementById('transactionAccountId').value;
+                const accountType = document.getElementById('transactionAccountType').value;
+                const note = document.getElementById('transactionNote').value;
+                const discount = parseFloat(document.getElementById('transactionDiscount').value);
+                const tax = parseFloat(document.getElementById('transactionTax').value);
+                const totalAmount = parseFloat(document.getElementById('transactionTotalAmount').value);
+
+                const transaction = {
+                    TransactionInfo : {
+                        accountId,
+                        accountType,
+                        note,
+                        discount,
+                        tax,
+                        totalAmount,
+                    },
+                    products,
+                };
+
+                
+                const url = `/api/HomeApi/transactions`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(transaction),
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            alert('Transaction saved successfully! Check the console for details.');
+                            console.log(data);
+                        } else {
+                            alert('Transaction details not found.');
+                        }
+                    } else {
+                        alert('Failed to save transaction. Server responded with status ' + response.status);
+                    }
+                } catch (error) {
+                    console.error('Error saving transaction:', error);
+                    alert('An error occurred while saving the transaction.');
+                }
+
+                console.log('Transaction Data:', transaction);
+
+                @* this.reset();
+                products.length = 0;
+                updateProductTable();
+                calculateTotalAmount(); *@
+            });
+
+        });
+    </script>
+}
