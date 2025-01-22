@@ -20,8 +20,6 @@ public class HomeApiController : ControllerBase
 
     [HttpPost("transactions")]
     public IActionResult ProcessTransaction(TransactionApiRequest req) {
-        req.TransactionInfo.OrderDate = DateTime.Now;
-        req.TransactionInfo.Status = "Panding";
         var res = _service.CreateNewTransaaction(req);
         if (!res.Success) {
             return StatusCode(500, res);
@@ -53,5 +51,14 @@ public class HomeApiController : ControllerBase
             detail: Activity.Current?.Id ?? HttpContext.TraceIdentifier,
             title: "An error occurred"
         );
+    }
+
+    [HttpPost("deliver-update-date")]
+    public IActionResult DeliverUpdateDate(DelivaryDateRequest ddr) {
+        var res = _service.UpdateDelivaryDate(ddr);
+        if (!res.Success) {
+            return StatusCode(500, res);
+        }
+        return Ok(res);
     }
 }

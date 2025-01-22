@@ -4779,19 +4779,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\dhana\\.nuget\\packages\\": {}
+    "C:\\Users\\1910\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Test\\DaryaVariaTest\\DaryaVariaTest\\DaryaVariaTest.csproj",
+      "projectUniqueName": "c:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\DaryaVariaTest.csproj",
       "projectName": "DaryaVariaTest",
-      "projectPath": "D:\\Test\\DaryaVariaTest\\DaryaVariaTest\\DaryaVariaTest.csproj",
-      "packagesPath": "C:\\Users\\dhana\\.nuget\\packages\\",
-      "outputPath": "D:\\Test\\DaryaVariaTest\\DaryaVariaTest\\obj\\",
+      "projectPath": "c:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\DaryaVariaTest.csproj",
+      "packagesPath": "C:\\Users\\1910\\.nuget\\packages\\",
+      "outputPath": "c:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\dhana\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\1910\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -4858,7 +4858,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

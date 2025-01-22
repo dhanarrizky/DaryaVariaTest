@@ -50,13 +50,13 @@
                             <div class="d-flex gap-2">
                                 @if (!string.IsNullOrEmpty(transaction.Status)) {
                                     if (transaction.Status.Equals("Panding", StringComparison.OrdinalIgnoreCase)) {
-                                        <button class="btn btn-warning btn-detail">
+                                        <button class="btn btn-warning btn-detail"  data-bs-toggle="modal" data-bs-target="#paymentModal" onclick="setIdModal(@transaction.Id)">
                                             Payment
                                         </button>
                                     }
 
-                                    if (!transaction.Status.Equals("Panding", StringComparison.OrdinalIgnoreCase) && transaction.DeliveryDate == null) {
-                                        <button class="btn btn-secondary btn-detail">
+                                    if (transaction.Status.Equals("Delivery", StringComparison.OrdinalIgnoreCase) && transaction.DeliveryDate == null) {
+                                        <button class="btn btn-secondary btn-detail" data-bs-toggle="modal" data-bs-target="#deliveryModal" onclick="setIdModal(@transaction.Id)">
                                             Delivery
                                         </button>
                                     }
@@ -82,7 +82,7 @@
 </div>
 
 <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="transactionModalLabel">Transaction Details</h5>
@@ -132,7 +132,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"  onclick="locationReload()">Close</button>
             </div>
         </div>
     </div>
@@ -225,15 +225,150 @@
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary" form="addTransactionForm">Save Transaction</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="locationReload()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalLabel">Add Payment Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="paymentForm">
+                    <div class="mb-3">
+                        <label for="transactionId" class="form-label">Transaction ID</label>
+                        <input type="number" class="form-control" id="transactionId" name="transactionId" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fromBankNumber" class="form-label">From Bank Number</label>
+                        <input type="text" class="form-control" id="fromBankNumber" name="fromBankNumber" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="toBankNumber" class="form-label">To Bank Number</label>
+                        <input type="text" class="form-control" id="toBankNumber" name="toBankNumber" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="paymentDate" class="form-label">Payment Date</label>
+                        <input type="datetime-local" class="form-control" id="paymentDate" name="paymentDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="paymentAmount" class="form-label">Payment Amount</label>
+                        <input type="number" step="0.01" class="form-control" id="paymentAmount" name="paymentAmount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="paymentMethod" class="form-label">Payment Method</label>
+                        <input type="text" class="form-control" id="paymentMethod" name="paymentMethod">
+                    </div>
+                    <div class="mb-3">
+                        <label for="note" class="form-label">Note</label>
+                        <textarea class="form-control" id="note" name="note" rows="3"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="submitPayment()">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deliveryModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="delivaryModalLabel">Delivary Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="paymentForm">
+                    <input type="datetime-local" hidden id="transactionId" name="transactionId" required>
+                    <div class="mb-3">
+                        <label for="delivaryDate" class="form-label">Delivary Date</label>
+                        <input type="datetime-local" class="form-control" id="delivaryDate" name="delivaryDate" required>
+                    </div>
+                    <button type="button" class="btn btn-primary mt-5" onclick="submitdelivaryDate()">Submit</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 
+
 @section Scripts {
     <script>
+        function locationReload() {
+            location.reload();
+        }
+        function setIdModal(id) {
+            document.getElementById('transactionId').value = id;
+        }
+        async function submitPayment() {
+            const paymentData = {
+                transactionId: document.getElementById('transactionId').value,
+                fromBankNumber: document.getElementById('fromBankNumber').value,
+                toBankNumber: document.getElementById('toBankNumber').value,
+                paymentDate: document.getElementById('paymentDate').value,
+                paymentAmount: parseFloat(document.getElementById('paymentAmount').value),
+                paymentMethod: document.getElementById('paymentMethod').value,
+                note: document.getElementById('note').value
+            };
+            try {
+                const response = await fetch('api/payments/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(paymentData)
+                });
+                if (response.ok) {
+                    alert('Payment added successfully!');
+                    document.getElementById('paymentForm').reset();
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+                    modal.hide();
+                    locationReload();
+                } else {
+                    const errorData = await response.json();
+                    alert('Error: ' + JSON.stringify(errorData));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the payment.');
+            }
+        }
+
+        async function submitdelivaryDate() {
+            const delivaryDateData = {
+                transactionId: document.getElementById('transactionId').value,
+                delivaryDate: document.getElementById('delivaryDate').value
+            };
+            try {
+                const response = await fetch('/api/HomeApi/deliver-update-date', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(delivaryDateData)
+                });
+
+                if (response.ok) {
+                    alert('Delivery date added successfully!');
+                    console.log("Delivery date success");
+                    locationReload();
+                } else {
+                    const errorData = await response.json();
+                    alert('Error: ' + JSON.stringify(errorData));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the delivery date.');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const productSelect = document.getElementById('productName');
             let allProductsGeneral = {};
@@ -248,7 +383,7 @@
             }
 
             function populateProductSelect(allProducts) {
-                console.log('allProducts : ',allProducts)
+                console.log('allProducts : ',allProducts);
                 productSelect.innerHTML = '<option value="">Select Product</option>';
                 allProducts.forEach(product => {
                     const option = document.createElement('option');
@@ -267,19 +402,21 @@
 
             modal.addEventListener('show.bs.modal', async function (event) {
                 const button = event.relatedTarget;
-                const transactionId = button.getAttribute('data-id');
-                const url = `/api/HomeApi/detail/${transactionId}`;
+                if(button) {
+                    const transactionId = button.getAttribute('data-id');
+                    const url = `/api/HomeApi/detail/${transactionId}`;
 
-                const response = await fetch(url);
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success) {
-                        showTransactionDetails(data.data);
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showTransactionDetails(data.data);
+                        } else {
+                            alert('Transaction details not found.');
+                        }
                     } else {
-                        alert('Transaction details not found.');
+                        alert('Failed to fetch transaction details.');
                     }
-                } else {
-                    alert('Failed to fetch transaction details.');
                 }
             });
 
@@ -349,19 +486,23 @@
 
             let productsTable = document.getElementById('modalProductsList');
             productsTable.innerHTML = '';
-            transaction.account.products.forEach(product => {
+            transaction.productsTransactions.$values.forEach(product => {
+                console.log('allproductgeneral : ', allProductsGeneral)
+                const productData = allProductsGeneral.find(a => a.id == product.productId);
+                console.log('product : ', product)
+                console.log('product : ', productData)
                 let row = `<tr>
-                    <td>${product.name}</td>
+                    <td>${productData?.name}</td>
                     <td>${product.price}</td>
-                    <td>2</td>
-                    <td>${product.price * 2}</td>
+                    <td>${product.quantity}</td>
+                    <td>${product.totalAmount}</td>
                 </tr>`;
                 productsTable.innerHTML += row;
             });
 
             let paymentsTable = document.getElementById('modalPaymentsList');
             paymentsTable.innerHTML = '';
-            transaction.informationOfPayments.forEach(payment => {
+            transaction.informationOfPayments.$values.forEach(payment => {
                 let row = `<tr>
                     <td>${payment.id}</td>
                     <td>${payment.fromBankNumber}</td>
@@ -376,7 +517,6 @@
             var myModal = new bootstrap.Modal(document.getElementById('transactionModal'));
             myModal.show();
         }
-
 
         document.getElementById('addTransactionForm').addEventListener('submit', async function (event) {
                 event.preventDefault();
@@ -417,6 +557,7 @@
                         if (data.success) {
                             alert('Transaction saved successfully! Check the console for details.');
                             console.log(data);
+                            locationReload();
                         } else {
                             alert('Transaction details not found.');
                         }
@@ -427,8 +568,6 @@
                     console.error('Error saving transaction:', error);
                     alert('An error occurred while saving the transaction.');
                 }
-
-                console.log('Transaction Data:', transaction);
 
                 @* this.reset();
                 products.length = 0;

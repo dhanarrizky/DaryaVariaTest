@@ -16,9 +16,30 @@ public class OrderServices {
         return _repo.GetAllTransaction();
     }
 
+    public BaseApiResponse<string> ProcessOfPayment(PaymentRequest iop) {
+        var res = _repo.GetDetailTransaction(iop.TransactionId);
+        if(res == null) {
+            return new ErrorApiResponse<string>("Bad Request : transaction Id not found") {
+                StatusCode = 400,
+            };
+        }
+        var result = _repo.CreateInformationOfPayment(ObjConverter.ConvertTo<InformationOfPayment>(iop));
+        if(!result) {
+            return new ErrorApiResponse<string>("internal server Error") {
+                StatusCode = 500
+            };
+        }
+
+        res.Status = "Delivery";
+        _repo.UpdateTransaction(res);
+        return new SuccessApiResponse<string>("Adding payment has been successfully");
+    }
+
     public BaseApiResponse<string> CreateNewTransaaction(TransactionApiRequest req) {
+        req.TransactionInfo.OrderDate = DateTime.Now;
+        req.TransactionInfo.Status = "Panding";
         var id = _repo.CreateNewMainTransaction(
-                    ObjConverter.ConvertTo<Transaction>(req.TransactionInfo));
+            ObjConverter.ConvertTo<Transaction>(req.TransactionInfo));
 
         if (id == 0) {
             throw new InvalidDataException("Internal Server error");
@@ -56,7 +77,23 @@ public class OrderServices {
     }
 
 
-    // public ExecutionIdResponse GetTransactionExecutionId() {
-    //     return ;
-    // }
+    public BaseApiResponse<string> UpdateDelivaryDate(DelivaryDateRequest ddr) {
+        var res = _repo.GetDetailTransaction(ddr.transactionId);
+        if(res == null) {
+            return new ErrorApiResponse<string>("Bad Request : transaction Id not found") {
+                StatusCode = 400,
+            };
+        }
+
+        res.DeliveryDate = ddr.DelivaryDate;
+        res.Status = "Completed";
+        var result = _repo.UpdateTransaction(res);
+        if(!result) {
+            return new ErrorApiResponse<string>("internal server Error") {
+                StatusCode = 500
+            };
+        }
+
+        return new SuccessApiResponse<string>("Update delivary date has been successfully");
+    }
 }

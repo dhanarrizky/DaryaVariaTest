@@ -1,6 +1,7 @@
 using DaryaVariaTest.IRepositories;
 using DaryaVariaTest.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace DaryaVariaTest.Repositories;
 
@@ -12,6 +13,12 @@ public class OrderRepository : IOrderRepository {
 
     public List<Transaction> GetAllTransaction() {
         return _context.Transactions.Include(t => t.Account).ToList();
+    }
+
+    public bool CreateInformationOfPayment(InformationOfPayment iop) {
+        _context.InformationOfPayments.Add(iop);
+        var res = _context.SaveChanges();
+        return res > 0;
     }
 
     public int CreateNewMainTransaction(Transaction trx) {
@@ -39,7 +46,26 @@ public class OrderRepository : IOrderRepository {
                 .Include(t => t.Account)
                 .Include(t => t.InformationOfPayments)
                 .Include(t => t.ProductsTransactions)
-                .ThenInclude(pt => pt.Product)
                 .Where(t => t.Id == trxId).FirstOrDefault() ?? throw new ArgumentException("Transaction With {trxId} TransactionId Not Found");
     }
+
+    public bool UpdateTransaction(Transaction trx) {
+        var obj = _context.Transactions.FirstOrDefault(t => t.Id == trx.Id);
+
+        if (obj == null) return false;
+        obj.Id = trx.Id;
+        obj.AccountId = trx.AccountId;
+        obj.AccountType = trx.AccountType;
+        obj.OrderDate = trx.OrderDate;
+        obj.DeliveryDate = trx.DeliveryDate;
+        obj.Note = trx.Note;
+        obj.Discount = trx.Discount;
+        obj.Tax = trx.Tax;
+        obj.TotalAmount = trx.TotalAmount;
+        obj.Status = trx.Status;
+
+        _context.SaveChanges();
+        return true;
+    }
+
 }
