@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\DaryaVariaTest.csproj": {}
+    "c:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\DaryaVariaTest.csproj": {}
   },
   "projects": {
-    "C:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\DaryaVariaTest.csproj": {
+    "c:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\DaryaVariaTest.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\DaryaVariaTest.csproj",
+        "projectUniqueName": "c:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\DaryaVariaTest.csproj",
         "projectName": "DaryaVariaTest",
-        "projectPath": "C:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\DaryaVariaTest.csproj",
+        "projectPath": "c:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\DaryaVariaTest.csproj",
         "packagesPath": "C:\\Users\\1910\\.nuget\\packages\\",
-        "outputPath": "C:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\obj\\",
+        "outputPath": "c:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\1910\\AppData\\Roaming\\NuGet\\NuGet.Config"

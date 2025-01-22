@@ -44,7 +44,6 @@ public class ChartServices {
         int[] uniqueOrderedYears = Years.Distinct().OrderBy(y => y).ToArray();
         var yearLabels = uniqueOrderedYears.Select(y => y.ToString()).ToArray();
 
-        // Kelompokkan berdasarkan label produk
         var groupedByProduct = listDataFil
             .GroupBy(l => l.Label)
             .Select(g =>
@@ -72,10 +71,10 @@ public class ChartServices {
 
     private string GenerateRandomColor() {
         var random = new Random();
-        int r = random.Next(0, 256); // Red: 0-255
-        int g = random.Next(0, 256); // Green: 0-255
-        int b = random.Next(0, 256); // Blue: 0-255
-        double a = 0.5 + (random.NextDouble() / 2); // Alpha: 0.5 - 1.0
+        int r = random.Next(0, 256);
+        int g = random.Next(0, 256);
+        int b = random.Next(0, 256);
+        double a = 0.5 + (random.NextDouble() / 2);
         return $"rgba({r}, {g}, {b}, {a.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)})";
     }
 

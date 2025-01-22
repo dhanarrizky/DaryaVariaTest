@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Vhz+1540vqg=",
+  "dgSpecHash": "9kjCFA+lqUw=",
   "success": true,
-  "projectFilePath": "C:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\DaryaVariaTest.csproj",
+  "projectFilePath": "c:\\dhanar_rizky_krisnadhy\\TEST\\DaryaVaria2\\DaryaVariaTest\\DaryaVariaTest.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\1910\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\1910\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

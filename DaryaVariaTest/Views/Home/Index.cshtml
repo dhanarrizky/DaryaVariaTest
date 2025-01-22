@@ -66,6 +66,14 @@
                                         data-id="@transaction.Id">
                                     Detail
                                 </button>
+                                <button class="btn btn-primary btn-detail" data-bs-toggle="modal" data-bs-target="#transactionModal"
+                                        data-id="@transaction.Id">
+                                    Approve
+                                </button>
+                                <button class="btn btn-danger btn-detail" data-bs-toggle="modal" data-bs-target="#transactionModal"
+                                        data-id="@transaction.Id">
+                                    Reject
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -443,7 +451,7 @@
             products.forEach((product, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                        <td>${allProductsGeneral[index]?.name}</td>
+                        <td>${allProductsGeneral.find(a => a.id == product.productId)?.name}</td>
                         <td>${product.quantity}</td>
                         <td>${product.price}</td>
                         <td>${product.totalAmount}</td>

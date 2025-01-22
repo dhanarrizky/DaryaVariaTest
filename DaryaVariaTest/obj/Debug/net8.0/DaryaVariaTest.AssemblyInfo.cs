@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DaryaVariaTest")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+16c6c5419d02eb1108cb730d9b7d470d748cb88a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+acaf01f55a86cd38bf6d2f579ce0019118d37909")]
 [assembly: System.Reflection.AssemblyProductAttribute("DaryaVariaTest")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DaryaVariaTest")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

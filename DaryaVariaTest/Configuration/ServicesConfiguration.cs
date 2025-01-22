@@ -14,6 +14,7 @@ public static class ServicesConfiguration {
         services.AddScoped<OrderServices>();
         services.AddScoped<ProductServices>();
         services.AddScoped<ChartServices>();
+        services.AddScoped<AuthServices>();
         return services;
     }
 }
