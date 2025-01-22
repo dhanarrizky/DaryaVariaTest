@@ -13,6 +13,7 @@ public static class ServicesConfiguration {
         // services configuration
         services.AddScoped<OrderServices>();
         services.AddScoped<ProductServices>();
+        services.AddScoped<ChartServices>();
         return services;
     }
 }

@@ -4,6 +4,7 @@ namespace DaryaVariaTest.IRepositories;
 
 public interface IOrderRepository {
 
+    public List<Transaction> GetAllTransactionWithDetailProductTrx();
     public List<Transaction> GetAllTransaction();
     public bool CreateInformationOfPayment(InformationOfPayment iop);
     public int CreateNewMainTransaction(Transaction trx);

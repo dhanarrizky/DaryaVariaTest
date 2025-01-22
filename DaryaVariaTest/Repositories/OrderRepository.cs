@@ -11,6 +11,10 @@ public class OrderRepository : IOrderRepository {
         _context = context;
     }
 
+    public List<Transaction> GetAllTransactionWithDetailProductTrx() {
+        return _context.Transactions.Include(t => t.ProductsTransactions).ToList();
+    }
+
     public List<Transaction> GetAllTransaction() {
         return _context.Transactions.Include(t => t.Account).ToList();
     }
