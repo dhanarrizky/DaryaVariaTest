@@ -1,0 +1,14 @@
+admin
+$2a$11$jqfxY6FRuCqsCp/KVpPC7.Xos5KnjxdFAk8/G8XNE9k7uwgR4mrTe
+
+
+user
+$2a$11$4Akzup4y1Ew7A.LkTKB/0OlxtBV7AUi1833ULvnUWrBoHqJawU8f6
+
+
+manager
+$2a$11$R91lbHCtDWNHX3Dz.2VClOY3QUAE7MpUy5GMT8VOak7ihkP4.pTWG
+
+
+test
+$2a$11$R6HV5M./3daC7q5oVPHyn.vBLjTv4.ju7hlbz/qqUyAYSWHrY5lTO

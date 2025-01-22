@@ -3,6 +3,12 @@
     ViewData["Title"] = "Transaction List";
 }
 
+<h2>Welcome, @User.Identity.Name!</h2>
+<p>Your role: @User.FindFirst(ClaimTypes.Role)?.Value</p>
+
+
+<a class="btn btn-danger" asp-area="" asp-controller="Auth" asp-action="Logout">Logout</a>
+
 <div class="text-center">
     <h1 class="display-4">Transaction List</h1>
 </div>
@@ -31,10 +37,8 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model != null && Model.Any())
-            {
-                foreach (var transaction in Model)
-                {
+            @if (Model != null && Model.Any()) {
+                foreach (var transaction in Model) {
                     <tr>
                         <td>@transaction.Id</td>
                         <td>@transaction.Account.Name</td>
@@ -48,39 +52,59 @@
                         <td>@transaction.Status</td>
                         <td>
                             <div class="d-flex gap-2">
+                                @{
+                                    var userRole = @User.FindFirst(ClaimTypes.Role)?.Value;
+                                    var isManagerOrDev = userRole?.Equals("Manager") == true || userRole?.Equals("TestDev") == true;
+                                    var isAdminOrDev = userRole?.Equals("Admin") == true || userRole?.Equals("TestDev") == true;
+                                    var isUserOrDev = userRole?.Equals("User") == true || userRole?.Equals("TestDev") == true;
+                                }
+
                                 @if (!string.IsNullOrEmpty(transaction.Status)) {
-                                    if (transaction.Status.Equals("Panding", StringComparison.OrdinalIgnoreCase)) {
-                                        <button class="btn btn-warning btn-detail"  data-bs-toggle="modal" data-bs-target="#paymentModal" onclick="setIdModal(@transaction.Id)">
+                                    if (transaction.Status.Equals("Panding", StringComparison.OrdinalIgnoreCase) && isUserOrDev) {
+                                        <button class="btn btn-warning btn-detail" data-bs-toggle="modal" data-bs-target="#paymentModal" onclick="setIdModal(@transaction.Id)">
                                             Payment
                                         </button>
                                     }
 
-                                    if (transaction.Status.Equals("Delivery", StringComparison.OrdinalIgnoreCase) && transaction.DeliveryDate == null) {
+                                    if (transaction.Status.Equals("Approved", StringComparison.OrdinalIgnoreCase) && transaction.DeliveryDate == null && isAdminOrDev) {
                                         <button class="btn btn-secondary btn-detail" data-bs-toggle="modal" data-bs-target="#deliveryModal" onclick="setIdModal(@transaction.Id)">
                                             Delivery
                                         </button>
                                     }
                                 }
 
-                                <button class="btn btn-primary btn-detail" data-bs-toggle="modal" data-bs-target="#transactionModal"
-                                        data-id="@transaction.Id">
+                                <button class="btn btn-primary btn-detail" data-bs-toggle="modal" data-bs-target="#transactionModal" data-id="@transaction.Id">
                                     Detail
                                 </button>
-                                <button class="btn btn-primary btn-detail" data-bs-toggle="modal" data-bs-target="#transactionModal"
-                                        data-id="@transaction.Id">
-                                    Approve
-                                </button>
-                                <button class="btn btn-danger btn-detail" data-bs-toggle="modal" data-bs-target="#transactionModal"
-                                        data-id="@transaction.Id">
-                                    Reject
-                                </button>
+
+                                @if ((isAdminOrDev || isManagerOrDev) && transaction.DeliveryDate == null && (
+                                        !transaction.Status.Equals("Approved", StringComparison.OrdinalIgnoreCase) && 
+                                        !transaction.Status.Equals("Rejected", StringComparison.OrdinalIgnoreCase)
+                                )) {
+                                    @if ((isAdminOrDev && !transaction.Status.Equals("Checked", StringComparison.OrdinalIgnoreCase)) || 
+                                        isManagerOrDev) {
+
+                                        <button class="btn btn-success btn-detail" onclick="ApproveRejectCheckFunc('Approval',@transaction.Id)">
+                                            @if (userRole?.Equals("Admin", StringComparison.OrdinalIgnoreCase) == true || userRole?.Equals("TestDev", StringComparison.OrdinalIgnoreCase) == true) {
+                                                @:Check
+                                            } else {
+                                                @:Approve
+                                            }
+                                        </button>   
+                                    }
+
+                                    @if(isManagerOrDev) {
+                                        <button class="btn btn-danger btn-detail" onclick="ApproveRejectCheckFunc('Reject',@transaction.Id)">
+                                            Reject
+                                        </button>
+                                    }
+                                }
+
                             </div>
                         </td>
                     </tr>
                 }
-            }
-            else
-            {
+            } else {
                 <tr>
                     <td colspan="10" class="text-center">No transactions available.</td>
                 </tr>
@@ -315,6 +339,32 @@
         function setIdModal(id) {
             document.getElementById('transactionId').value = id;
         }
+
+        async function ApproveRejectCheckFunc(approveReject, id) {
+            try {
+                const role = "@User.FindFirst(ClaimTypes.Role)?.Value";
+                const response = await fetch(`/api/HomeApi/${role}/${approveReject}/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                if (response.ok) {
+                    alert('Approved or Rejected successfully!');
+                    console.log(response);
+                    location.reload();
+                } else {
+                    const errorData = await response.json();
+                    alert('Error: ' + JSON.stringify(errorData));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An unexpected error occurred: ' + error.message);
+            }
+        }
+
+
         async function submitPayment() {
             const paymentData = {
                 transactionId: document.getElementById('transactionId').value,
@@ -576,11 +626,6 @@
                     console.error('Error saving transaction:', error);
                     alert('An error occurred while saving the transaction.');
                 }
-
-                @* this.reset();
-                products.length = 0;
-                updateProductTable();
-                calculateTotalAmount(); *@
             });
 
         });

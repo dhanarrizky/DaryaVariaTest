@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DaryaVariaTest.Models;
 
-public partial class DaryaVariaApp2Context : DbContext
+public partial class DaryaVariaAppContext : DbContext
 {
-    public DaryaVariaApp2Context()
+    public DaryaVariaAppContext()
     {
     }
 
-    public DaryaVariaApp2Context(DbContextOptions<DaryaVariaApp2Context> options)
+    public DaryaVariaAppContext(DbContextOptions<DaryaVariaAppContext> options)
         : base(options)
     {
     }
@@ -26,6 +26,8 @@ public partial class DaryaVariaApp2Context : DbContext
     public virtual DbSet<Inventory> Inventories { get; set; }
 
     public virtual DbSet<LoginAuth> LoginAuths { get; set; }
+
+    public virtual DbSet<LoginAuth2> LoginAuth2s { get; set; }
 
     public virtual DbSet<Product> Products { get; set; }
 
@@ -70,6 +72,8 @@ public partial class DaryaVariaApp2Context : DbContext
 
             entity.ToTable("AccountDetail");
 
+            entity.HasIndex(e => e.AccountId, "IX_AccountDetail_AccountId");
+
             entity.Property(e => e.AccountType)
                 .HasMaxLength(15)
                 .IsUnicode(false);
@@ -111,6 +115,8 @@ public partial class DaryaVariaApp2Context : DbContext
 
             entity.ToTable("InformationOfPayment");
 
+            entity.HasIndex(e => e.TransactionId, "IX_InformationOfPayment_TransactionId");
+
             entity.Property(e => e.FromBankNumber)
                 .HasMaxLength(20)
                 .IsUnicode(false);
@@ -135,6 +141,10 @@ public partial class DaryaVariaApp2Context : DbContext
             entity.HasKey(e => e.Id).HasName("PK__Inventor__3214EC07ED833853");
 
             entity.ToTable("Inventory");
+
+            entity.HasIndex(e => e.ProductId, "IX_Inventory_ProductId");
+
+            entity.HasIndex(e => e.UnitTypeId, "IX_Inventory_UnitTypeId");
 
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
@@ -162,11 +172,11 @@ public partial class DaryaVariaApp2Context : DbContext
                 .HasNoKey()
                 .ToTable("LoginAuth");
 
+            entity.HasIndex(e => e.AccountId, "IX_LoginAuth_AccountId");
+
             entity.HasIndex(e => e.Username, "UQ__LoginAut__536C85E4B3DA3FBA").IsUnique();
 
             entity.HasIndex(e => e.Email, "UQ__LoginAut__A9D10534C9131876").IsUnique();
-
-            entity.HasIndex(e => e.PasswordHash, "UQ__LoginAut__D60E46A2D7C49C48").IsUnique();
 
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
@@ -175,9 +185,7 @@ public partial class DaryaVariaApp2Context : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(255)
                 .IsUnicode(false);
-            entity.Property(e => e.PasswordHash)
-                .HasMaxLength(200)
-                .IsUnicode(false);
+            entity.Property(e => e.PasswordHash).IsUnicode(false);
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
@@ -194,9 +202,45 @@ public partial class DaryaVariaApp2Context : DbContext
                 .HasConstraintName("FK__LoginAuth__Accou__45F365D3");
         });
 
+        modelBuilder.Entity<LoginAuth2>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("LoginAuth2");
+
+            entity.HasIndex(e => e.Username, "UQ__LoginAut__536C85E4FCBEB718").IsUnique();
+
+            entity.HasIndex(e => e.Email, "UQ__LoginAut__A9D1053477324F3B").IsUnique();
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+            entity.Property(e => e.Email)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.PasswordHash).IsUnicode(false);
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.UserRole)
+                .HasMaxLength(15)
+                .IsUnicode(false);
+            entity.Property(e => e.Username)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Account).WithMany()
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__LoginAuth__Accou__70DDC3D8");
+        });
+
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Products__3214EC0731DC068C");
+
+            entity.HasIndex(e => e.AccountId, "IX_Products_AccountId");
 
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
@@ -222,6 +266,10 @@ public partial class DaryaVariaApp2Context : DbContext
 
             entity.ToTable("ProductsTransaction");
 
+            entity.HasIndex(e => e.ProductId, "IX_ProductsTransaction_ProductId");
+
+            entity.HasIndex(e => e.TransactionId, "IX_ProductsTransaction_TransactionId");
+
             entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Quantity)
                 .HasDefaultValue(1)
@@ -240,6 +288,8 @@ public partial class DaryaVariaApp2Context : DbContext
         modelBuilder.Entity<Transaction>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Transact__3214EC0734BBEC35");
+
+            entity.HasIndex(e => e.AccountId, "IX_Transactions_AccountId");
 
             entity.Property(e => e.AccountType)
                 .HasMaxLength(15)

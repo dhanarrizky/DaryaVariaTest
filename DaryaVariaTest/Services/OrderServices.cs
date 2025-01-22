@@ -16,6 +16,29 @@ public class OrderServices {
         return _repo.GetAllTransaction();
     }
 
+    public BaseApiResponse<string> ApproveRejectService(string role, string approveReject, int id) {
+        try {
+            string status = role.Equals("Admin", StringComparison.OrdinalIgnoreCase) 
+                ? "Checked" 
+                : (approveReject.Equals("Approval", StringComparison.OrdinalIgnoreCase) 
+                    ? "Approved" 
+                    : "Rejected");
+
+            var transaction = _repo.GetDetailTransaction(id);
+            transaction.Status = status;
+
+            var result = _repo.UpdateTransaction(transaction);
+            
+            if (result) {
+                return new SuccessApiResponse<string>("seccess");
+            } else {
+                return new ErrorApiResponse<string>("Transaction not found");
+            }
+        } catch (Exception ex) {
+            return new ErrorApiResponse<string>($"An error occurred: {ex.Message}");
+        }
+    }
+
     public BaseApiResponse<string> ProcessOfPayment(PaymentRequest iop) {
         var res = _repo.GetDetailTransaction(iop.TransactionId);
         if(res == null) {

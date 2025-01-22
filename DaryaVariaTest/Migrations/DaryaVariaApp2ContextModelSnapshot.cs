@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DaryaVariaTest.Migrations
 {
-    [DbContext(typeof(DaryaVariaApp2Context))]
+    [DbContext(typeof(DaryaVariaAppContext))]
     partial class DaryaVariaApp2ContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

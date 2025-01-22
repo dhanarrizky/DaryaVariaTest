@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace DaryaVariaTest.Models;
 
-public partial class LoginAuth
+public partial class LoginAuth2
 {
     public string Username { get; set; } = null!;
 
     public string Email { get; set; } = null!;
 
-    public string? PasswordHash { get; set; }
+    public string PasswordHash { get; set; } = null!;
 
     public string UserRole { get; set; } = null!;
 

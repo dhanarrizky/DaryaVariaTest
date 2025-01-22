@@ -5,8 +5,8 @@ using Microsoft.EntityFrameworkCore;
 namespace DaryaVariaTest.Repositories;
 
 public class ProductRepository : IProductRepository {
-    private readonly DaryaVariaApp2Context _context;
-    public ProductRepository(DaryaVariaApp2Context context){
+    private readonly DaryaVariaAppContext _context;
+    public ProductRepository(DaryaVariaAppContext context){
         _context = context;
     }
 

@@ -6,8 +6,8 @@ using Microsoft.VisualBasic;
 namespace DaryaVariaTest.Repositories;
 
 public class OrderRepository : IOrderRepository {
-    private readonly DaryaVariaApp2Context _context;
-    public OrderRepository(DaryaVariaApp2Context context){
+    private readonly DaryaVariaAppContext _context;
+    public OrderRepository(DaryaVariaAppContext context){
         _context = context;
     }
 

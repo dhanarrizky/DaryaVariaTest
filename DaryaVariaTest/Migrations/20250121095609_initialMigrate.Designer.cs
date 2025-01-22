@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DaryaVariaTest.Migrations
 {
-    [DbContext(typeof(DaryaVariaApp2Context))]
+    [DbContext(typeof(DaryaVariaAppContext))]
     [Migration("20250121095609_initialMigrate")]
     partial class initialMigrate
     {

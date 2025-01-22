@@ -26,10 +26,10 @@ create table AccountRole(
     DeletedAt datetime
 );
 
-create table LoginAuth(
+create table LoginAuth2(
     Username varchar(50) not null unique,
     Email varchar(255) not null unique,
-    PasswordHash varchar(200) not null unique,
+    PasswordHash varchar(max) not null,
     UserRole varchar(15) not null,
     AccountId int not null,
     CreatedAt datetime not null default current_timestamp,

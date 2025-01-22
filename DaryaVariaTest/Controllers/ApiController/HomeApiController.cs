@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using DaryaVariaTest.Models;
 using DaryaVariaTest.Services;
 using DaryaVariaTest.Models.Api.Request;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DaryaVariaTest.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class HomeApiController : ControllerBase
@@ -44,19 +46,24 @@ public class HomeApiController : ControllerBase
         return Ok(res);
     }
 
-    [HttpGet("error")]
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult GetError() {
-        return Problem(
-            detail: Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-            title: "An error occurred"
-        );
+    [HttpGet("Get-all-Role")]
+    public IActionResult GetAllRole() {
+        return Ok();
     }
 
     [HttpPost("deliver-update-date")]
     public IActionResult DeliverUpdateDate(DelivaryDateRequest ddr) {
         var res = _service.UpdateDelivaryDate(ddr);
         if (!res.Success) {
+            return StatusCode(500, res);
+        }
+        return Ok(res);
+    }
+
+    [HttpPost("{role}/{approveReject}/{id}")]
+    public IActionResult ApproveRejectManager(string role, string approveReject, int id) {
+        var res = _service.ApproveRejectService(role, approveReject, id);
+        if(!res.Success) {
             return StatusCode(500, res);
         }
         return Ok(res);
